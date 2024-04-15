@@ -2,6 +2,11 @@
 #include <vector>
 #include <algorithm>
 #include <string>
+#include <sstream>
+#include <iomanip>
+#include <filesystem>
+
+namespace fs = std::filesystem;
 
 struct File {
     std::string name;
@@ -66,6 +71,29 @@ void findFile(const std::string& name) {
     }
 }
 
+void listFiles() {
+    std::cout << "Listing files:" << std::endl;
+    for (const auto& file : files) {
+        std::cout << "- " << file.name << std::endl;
+    }
+}
+
+void createDirectory(const std::string& name) {
+    if (fs::create_directory(name)) {
+        std::cout << "Directory " << name << " created successfully." << std::endl;
+    } else {
+        std::cout << "Failed to create directory " << name << "." << std::endl;
+    }
+}
+
+void deleteDirectory(const std::string& name) {
+    if (fs::remove(name)) {
+        std::cout << "Directory " << name << " deleted successfully." << std::endl;
+    } else {
+        std::cout << "Failed to delete directory " << name << "." << std::endl;
+    }
+}
+
 int main() {
     while (true) {
         std::cout << "Choose an operation:\n"
@@ -74,7 +102,10 @@ int main() {
                   << "3. Move a file\n"
                   << "4. Copy a file\n"
                   << "5. Find a file\n"
-                  << "6. Exit\n";
+                  << "6. List files\n"
+                  << "7. Create directory\n"
+                  << "8. Delete directory\n"
+                  << "9. Exit\n";
 
         int choice;
         std::cin >> choice;
@@ -112,6 +143,18 @@ int main() {
             std::cin >> name;
             findFile(name);
         } else if (choice == 6) {
+            listFiles();
+        } else if (choice == 7) {
+            std::string name;
+            std::cout << "Enter directory name to create: ";
+            std::cin >> name;
+            createDirectory(name);
+        } else if (choice == 8) {
+            std::string name;
+            std::cout << "Enter directory name to delete: ";
+            std::cin >> name;
+            deleteDirectory(name);
+        } else if (choice == 9) {
             break;
         } else {
             std::cout << "Invalid choice. Please try again." << std::endl;
