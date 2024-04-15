@@ -1,20 +1,15 @@
 CC = g++
 CFLAGS = -std=c++11
-TARGET = myOS
 
 SRCS = main.cpp
-
 OBJS = $(SRCS:.cpp=.o)
-
-.PHONY: all clean
-
-all: $(TARGET)
+TARGET = myOS
 
 $(TARGET): $(OBJS)
-	$(CC) $(CFLAGS) -o $@ $^
+	$(CC) $(CFLAGS) -o $(TARGET) $(OBJS)
 
 .cpp.o:
-	$(CC) $(CFLAGS) -c $<
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(TARGET) $(OBJS)
+	rm -f $(OBJS) $(TARGET)
