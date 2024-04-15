@@ -1,165 +1,161 @@
 #include <iostream>
+#include <fstream>
 #include <vector>
-#include <algorithm>
 #include <string>
-#include <sstream>
-#include <iomanip>
-#include <filesystem>
+#include <cstring>
+#include <cstdio>
 
-namespace fs = std::filesystem;
+using namespace std;
 
+// File structure
 struct File {
-    std::string name;
-    std::string content;
+    string name;
+    string content;
 };
 
-std::vector<File> files;
+// Directory structure
+struct Directory {
+    string name;
+    vector<File> files;
+};
 
-void addFile(const std::string& name, const std::string& content) {
-    files.push_back({name, content});
-    std::cout << "File " << name << " added successfully." << std::endl;
-}
-
-void deleteFile(const std::string& name) {
-    auto it = std::find_if(files.begin(), files.end(), [&](const File& f) {
-        return f.name == name;
-    });
-
-    if (it != files.end()) {
-        files.erase(it);
-        std::cout << "File " << name << " deleted successfully." << std::endl;
-    } else {
-        std::cout << "File " << name << " not found." << std::endl;
-    }
-}
-
-void moveFile(const std::string& name, const std::string& destination) {
-    auto it = std::find_if(files.begin(), files.end(), [&](const File& f) {
-        return f.name == name;
-    });
-
-    if (it != files.end()) {
-        it->name = destination;
-        std::cout << "File " << name << " moved to " << destination << " successfully." << std::endl;
-    } else {
-        std::cout << "File " << name << " not found." << std::endl;
-    }
-}
-
-void copyFile(const std::string& name, const std::string& destination) {
-    auto it = std::find_if(files.begin(), files.end(), [&](const File& f) {
-        return f.name == name;
-    });
-
-    if (it != files.end()) {
-        files.push_back({destination, it->content});
-        std::cout << "File " << name << " copied to " << destination << " successfully." << std::endl;
-    } else {
-        std::cout << "File " << name << " not found." << std::endl;
-    }
-}
-
-void findFile(const std::string& name) {
-    auto it = std::find_if(files.begin(), files.end(), [&](const File& f) {
-        return f.name == name;
-    });
-
-    if (it != files.end()) {
-        std::cout << "File " << name << " found." << std::endl;
-    } else {
-        std::cout << "File " << name << " not found." << std::endl;
-    }
-}
-
-void listFiles() {
-    std::cout << "Listing files:" << std::endl;
-    for (const auto& file : files) {
-        std::cout << "- " << file.name << std::endl;
-    }
-}
-
-void createDirectory(const std::string& name) {
-    if (fs::create_directory(name)) {
-        std::cout << "Directory " << name << " created successfully." << std::endl;
-    } else {
-        std::cout << "Failed to create directory " << name << "." << std::endl;
-    }
-}
-
-void deleteDirectory(const std::string& name) {
-    if (fs::remove(name)) {
-        std::cout << "Directory " << name << " deleted successfully." << std::endl;
-    } else {
-        std::cout << "Failed to delete directory " << name << "." << std::endl;
-    }
-}
+// Function prototypes
+void addFile(Directory& dir);
+void deleteFile(Directory& dir);
+void moveFile(Directory& dir);
+void copyFile(Directory& dir);
+void findFile(Directory& dir);
+void listFiles(Directory& dir);
+void createDirectory(Directory& dir);
+void deleteDirectory(Directory& dir);
 
 int main() {
-    while (true) {
-        std::cout << "Choose an operation:\n"
-                  << "1. Add a file\n"
-                  << "2. Delete a file\n"
-                  << "3. Move a file\n"
-                  << "4. Copy a file\n"
-                  << "5. Find a file\n"
-                  << "6. List files\n"
-                  << "7. Create directory\n"
-                  << "8. Delete directory\n"
-                  << "9. Exit\n";
+    Directory root{"root", {}};
+    Directory currentDir = root;
 
-        int choice;
-        std::cin >> choice;
+    char choice;
+    do {
+        cout << "\nmyOS Menu\n";
+        cout << "1. Add a file\n";
+        cout << "2. Delete a file\n";
+        cout << "3. Move a file\n";
+        cout << "4. Copy a file\n";
+        cout << "5. Find a file\n";
+        cout << "6. List files (ls)\n";
+        cout << "7. Create a directory\n";
+        cout << "8. Delete a directory\n";
+        cout << "9. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+        cin.ignore();
 
-        if (choice == 1) {
-            std::string name, content;
-            std::cout << "Enter file name: ";
-            std::cin >> name;
-            std::cout << "Enter file content: ";
-            std::cin.ignore(); // Ignore newline character left by previous input
-            std::getline(std::cin, content);
-            addFile(name, content);
-        } else if (choice == 2) {
-            std::string name;
-            std::cout << "Enter file name to delete: ";
-            std::cin >> name;
-            deleteFile(name);
-        } else if (choice == 3) {
-            std::string name, destination;
-            std::cout << "Enter file name to move: ";
-            std::cin >> name;
-            std::cout << "Enter destination: ";
-            std::cin >> destination;
-            moveFile(name, destination);
-        } else if (choice == 4) {
-            std::string name, destination;
-            std::cout << "Enter file name to copy: ";
-            std::cin >> name;
-            std::cout << "Enter destination: ";
-            std::cin >> destination;
-            copyFile(name, destination);
-        } else if (choice == 5) {
-            std::string name;
-            std::cout << "Enter file name to find: ";
-            std::cin >> name;
-            findFile(name);
-        } else if (choice == 6) {
-            listFiles();
-        } else if (choice == 7) {
-            std::string name;
-            std::cout << "Enter directory name to create: ";
-            std::cin >> name;
-            createDirectory(name);
-        } else if (choice == 8) {
-            std::string name;
-            std::cout << "Enter directory name to delete: ";
-            std::cin >> name;
-            deleteDirectory(name);
-        } else if (choice == 9) {
-            break;
-        } else {
-            std::cout << "Invalid choice. Please try again." << std::endl;
+        switch (choice) {
+            case '1':
+                addFile(currentDir);
+                break;
+            case '2':
+                deleteFile(currentDir);
+                break;
+            case '3':
+                moveFile(currentDir);
+                break;
+            case '4':
+                copyFile(currentDir);
+                break;
+            case '5':
+                findFile(currentDir);
+                break;
+            case '6':
+                listFiles(currentDir);
+                break;
+            case '7':
+                createDirectory(currentDir);
+                break;
+            case '8':
+                deleteDirectory(currentDir);
+                break;
+            case '9':
+                cout << "Exiting myOS. Goodbye!\n";
+                break;
+            default:
+                cout << "Invalid choice. Please try again.\n";
+        }
+    } while (choice != '9');
+
+    return 0;
+}
+
+void addFile(Directory& dir) {
+    string fileName, fileContent;
+    cout << "Enter file name: ";
+    getline(cin, fileName);
+    cout << "Enter file content: ";
+    getline(cin, fileContent);
+
+    File newFile{fileName, fileContent};
+    dir.files.push_back(newFile);
+    cout << "File added successfully.\n";
+}
+
+void deleteFile(Directory& dir) {
+    string fileName;
+    cout << "Enter file name to delete: ";
+    getline(cin, fileName);
+
+    for (auto it = dir.files.begin(); it != dir.files.end(); ++it) {
+        if (it->name == fileName) {
+            dir.files.erase(it);
+            cout << "File deleted successfully.\n";
+            return;
         }
     }
 
-    return 0;
+    cout << "File not found.\n";
+}
+
+void moveFile(Directory& dir) {
+    // Implementation left as an exercise
+    cout << "Move file functionality not implemented yet.\n";
+}
+
+void copyFile(Directory& dir) {
+    // Implementation left as an exercise
+    cout << "Copy file functionality not implemented yet.\n";
+}
+
+void findFile(Directory& dir) {
+    string fileName;
+    cout << "Enter file name to find: ";
+    getline(cin, fileName);
+
+    for (const auto& file : dir.files) {
+        if (file.name == fileName) {
+            cout << "File found. Content: " << file.content << endl;
+            return;
+        }
+    }
+
+    cout << "File not found.\n";
+}
+
+void listFiles(Directory& dir) {
+    cout << "Files in directory '" << dir.name << "':\n";
+    for (const auto& file : dir.files) {
+        cout << file.name << endl;
+    }
+}
+
+void createDirectory(Directory& dir) {
+    string dirName;
+    cout << "Enter directory name: ";
+    getline(cin, dirName);
+
+    Directory newDir{dirName, {}};
+    dir.files.push_back(newDir);
+    cout << "Directory created successfully.\n";
+}
+
+void deleteDirectory(Directory& dir) {
+    // Implementation left as an exercise
+    cout << "Delete directory functionality not implemented yet.\n";
 }
