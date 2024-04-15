@@ -5,6 +5,7 @@ myos.bin: boot.bin main.o
 
 boot.bin:
 	nasm -f elf32 src/boot.asm -o bin/boot.bin
+	mv bin/boot.bin bin/
 
 main.o:
 	gcc -ffreestanding -c src/main.c -o main.o
