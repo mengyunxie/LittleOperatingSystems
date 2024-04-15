@@ -1,18 +1,18 @@
-[bits 16]            ; Tells NASM assembly source is 16 bit
-[org 0x7C00]         ; Origin, tells where the code will be in memory
-
+[bits 16]
 start:
-    cli              ; Clear interrupts
-    mov ax, 0x9000   ; Set up the stack
-    mov ss, ax
-    mov sp, 0xFFFF
-    mov ax, 0x9000   ; Set data segment
+    mov ax, 0x9000
     mov ds, ax
     mov es, ax
+    mov fs, ax
+    mov gs, ax
 
-    call main        ; Call the main function written in C
+    call KERNEL_OFFSET
 
-    hlt              ; Halt the CPU
+    ; Infinite loop
+    jmp $
+
+KERNEL_OFFSET:
+    ; Kernel loading code goes here
 
 times 510-($-$$) db 0
-dw 0xAA55           ; Boot signature at the end of the bootloader
+dw 0xAA55

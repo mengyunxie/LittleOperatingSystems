@@ -1,13 +1,14 @@
 all: myos.bin
 
-myos.bin: boot.o main.o
-	ld -o bin/myos.bin -Ttext 0x7C00 --oformat=binary boot.o main.o
+myos.bin: boot.bin main.o
+	ld -o bin/myos.bin -Ttext 0x7C00 --oformat=binary boot.bin main.o
 
-boot.o:
-	nasm -f elf src/boot.asm -o boot.o
+boot.bin:
+	nasm -f bin src/boot.asm -o boot.bin
 
 main.o:
 	gcc -ffreestanding -c src/main.c -o main.o
 
 clean:
-	rm -f *.o bin/myos.bin
+	rm -f *.o *.bin bin/myos.bin
+
