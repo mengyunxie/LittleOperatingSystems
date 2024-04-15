@@ -16,7 +16,7 @@ struct File {
 // Directory structure
 struct Directory {
     string name;
-    vector<File> files;
+    vector<Directory> directories; // Changed from vector<File> to vector<Directory>
 };
 
 // Function prototypes
@@ -151,7 +151,7 @@ void createDirectory(Directory& dir) {
     getline(cin, dirName);
 
     Directory newDir{dirName, {}};
-    dir.files.push_back(newDir);
+    dir.directories.push_back(newDir); // Push to directories, not files
     cout << "Directory created successfully.\n";
 }
 
