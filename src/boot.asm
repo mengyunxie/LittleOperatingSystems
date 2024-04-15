@@ -1,4 +1,6 @@
 [bits 16]
+[org 0x7C00]
+
 start:
     mov ax, 0x9000
     mov ds, ax
