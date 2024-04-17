@@ -3,7 +3,7 @@ CFLAGS = -std=c++11
 
 SRCS = main.cpp
 OBJS = $(SRCS:.cpp=.o)
-TARGET = myOS
+TARGET = LittleOperatingSystems
 
 $(TARGET): $(OBJS)
 	$(CC) $(CFLAGS) -o $(TARGET) $(OBJS)

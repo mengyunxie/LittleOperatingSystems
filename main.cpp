@@ -1,122 +1,78 @@
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <algorithm>
-#include <string>
 
-struct File {
-    std::string name;
-    std::string content;
+using namespace std;
+
+struct Process {
+    string name;
+    int priority;
 };
 
-std::vector<File> files;
-
-void addFile(const std::string& name, const std::string& content) {
-    files.push_back({name, content});
-    std::cout << "File " << name << " added successfully." << std::endl;
-}
-
-void deleteFile(const std::string& name) {
-    auto it = std::find_if(files.begin(), files.end(), [&](const File& f) {
-        return f.name == name;
-    });
-
-    if (it != files.end()) {
-        files.erase(it);
-        std::cout << "File " << name << " deleted successfully." << std::endl;
-    } else {
-        std::cout << "File " << name << " not found." << std::endl;
-    }
-}
-
-void moveFile(const std::string& name, const std::string& destination) {
-    auto it = std::find_if(files.begin(), files.end(), [&](const File& f) {
-        return f.name == name;
-    });
-
-    if (it != files.end()) {
-        it->name = destination;
-        std::cout << "File " << name << " moved to " << destination << " successfully." << std::endl;
-    } else {
-        std::cout << "File " << name << " not found." << std::endl;
-    }
-}
-
-void copyFile(const std::string& name, const std::string& destination) {
-    auto it = std::find_if(files.begin(), files.end(), [&](const File& f) {
-        return f.name == name;
-    });
-
-    if (it != files.end()) {
-        files.push_back({destination, it->content});
-        std::cout << "File " << name << " copied to " << destination << " successfully." << std::endl;
-    } else {
-        std::cout << "File " << name << " not found." << std::endl;
-    }
-}
-
-void findFile(const std::string& name) {
-    auto it = std::find_if(files.begin(), files.end(), [&](const File& f) {
-        return f.name == name;
-    });
-
-    if (it != files.end()) {
-        std::cout << "File " << name << " found." << std::endl;
-    } else {
-        std::cout << "File " << name << " not found." << std::endl;
-    }
-}
-
 int main() {
-    while (true) {
-        std::cout << "Choose an operation:\n"
-                  << "1. Add a file\n"
-                  << "2. Delete a file\n"
-                  << "3. Move a file\n"
-                  << "4. Copy a file\n"
-                  << "5. Find a file\n"
-                  << "6. Exit\n";
+    // Define a vector of processes
+    vector<Process> processes = {
+        {"Process A", 2},
+        {"Process B", 1},
+        {"Process C", 3}
+    };
 
-        int choice;
-        std::cin >> choice;
+    // Simulate process scheduling
+    sort(processes.begin(), processes.end(), [](const Process& a, const Process& b) {
+        return a.priority < b.priority;
+    });
 
-        if (choice == 1) {
-            std::string name, content;
-            std::cout << "Enter file name: ";
-            std::cin >> name;
-            std::cout << "Enter file content: ";
-            std::cin.ignore(); // Ignore newline character left by previous input
-            std::getline(std::cin, content);
-            addFile(name, content);
-        } else if (choice == 2) {
-            std::string name;
-            std::cout << "Enter file name to delete: ";
-            std::cin >> name;
-            deleteFile(name);
-        } else if (choice == 3) {
-            std::string name, destination;
-            std::cout << "Enter file name to move: ";
-            std::cin >> name;
-            std::cout << "Enter destination: ";
-            std::cin >> destination;
-            moveFile(name, destination);
-        } else if (choice == 4) {
-            std::string name, destination;
-            std::cout << "Enter file name to copy: ";
-            std::cin >> name;
-            std::cout << "Enter destination: ";
-            std::cin >> destination;
-            copyFile(name, destination);
-        } else if (choice == 5) {
-            std::string name;
-            std::cout << "Enter file name to find: ";
-            std::cin >> name;
-            findFile(name);
-        } else if (choice == 6) {
-            break;
-        } else {
-            std::cout << "Invalid choice. Please try again." << std::endl;
-        }
+    // Print the scheduled processes
+    cout << "Process Scheduling:" << endl;
+    for (const Process& process : processes) {
+        cout << "Running " << process.name << " (Priority " << process.priority << ")" << endl;
     }
 
+    // Create and manipulate files
+    string file_name = "sample.txt";
+    ofstream file(file_name);
+    if (file.is_open()) {
+        // Write content to the file
+        file << "This is a simple file created by a process.";
+        file.close();
+    }
+
+    // Check if the file exists
+    if (ifstream(file_name)) {
+        cout << "\nFile '" << file_name << "' exists." << endl;
+
+        // Read the file
+        ifstream file_in(file_name);
+        string content;
+        getline(file_in, content);
+        cout << "File Content: " << content << endl;
+    }
+
+    // Clean up by deleting the file
+    if (remove(file_name.c_str()) == 0) {
+        cout << "\nFile '" << file_name << "' has been deleted." << endl;
+    }
+
+    // Introduce the concept of system calls
+    cout << "\nSystem Calls:" << endl;
+    cout << "1. Process Creation: The operating system creates and manages processes." << endl;
+    cout << "2. File Operations: OS provides APIs for file I/O." << endl;
+    cout << "3. File Deletion: OS allows processes to delete files." << endl;
+    cout << "4. System Calls: Processes make requests to the OS using system calls." << endl;
+
+    // Explain how the OS abstracts hardware
+    cout << "\nOperating System Abstraction:" << endl;
+    cout << "The OS abstracts hardware details, providing a uniform interface to processes." << endl;
+    cout << "Processes interact with the OS through system calls, which manage resources." << endl;
+
+    // Conclude by summarizing the role of an OS
+    cout << "\nIn summary, an operating system:" << endl;
+    cout << "- Manages processes and scheduling." << endl;
+    cout << "- Provides file management and I/O operations." << endl;
+    cout << "- Abstracts hardware details for processes." << endl;
+    cout << "- Ensures system stability and security." << endl;
+
+    
     return 0;
 }
