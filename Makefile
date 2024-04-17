@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS = -std=c++11
+CFLAGS = -std=c++17
 
 SRCS = main.cpp
 OBJS = $(SRCS:.cpp=.o)
