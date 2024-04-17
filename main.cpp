@@ -2,13 +2,64 @@
 #include <fstream>
 #include <vector>
 #include <algorithm>
+#include <filesystem>
 
 using namespace std;
+namespace fs = std::filesystem;
 
 struct Process {
     string name;
     int priority;
 };
+
+// Function to add content to a file
+void addFileContent(const string& file_name, const string& content) {
+    ofstream file(file_name, ios_base::app); // Open the file in append mode
+    if (file.is_open()) {
+        file << content;
+        cout << "Content added to file." << endl;
+        file.close();
+    } else {
+        cerr << "Error: Unable to open file for adding content." << endl;
+    }
+}
+
+// Function to delete a file
+void deleteFile(const string& file_name) {
+    if (fs::remove(file_name)) {
+        cout << "File '" << file_name << "' has been deleted." << endl;
+    } else {
+        cerr << "Error: Unable to delete file." << endl;
+    }
+}
+
+// Function to copy a file
+void copyFile(const string& source_file, const string& dest_file) {
+    if (fs::copy_file(source_file, dest_file, fs::copy_options::overwrite_existing)) {
+        cout << "File '" << source_file << "' copied to '" << dest_file << "'." << endl;
+    } else {
+        cerr << "Error: Unable to copy file." << endl;
+    }
+}
+
+// Function to update content of a file
+void updateFile(const string& file_name, const string& new_content) {
+    ofstream file(file_name); // Open the file in truncate mode
+    if (file.is_open()) {
+        file << new_content;
+        cout << "File content updated." << endl;
+        file.close();
+    } else {
+        cerr << "Error: Unable to open file for updating content." << endl;
+    }
+}
+
+// Function to list files in a directory
+void listFiles(const string& directory) {
+    for (const auto& entry : fs::directory_iterator(directory)) {
+        cout << entry.path() << endl;
+    }
+}
 
 int main() {
     // Define a vector of processes
@@ -39,7 +90,7 @@ int main() {
     }
 
     // Check if the file exists
-    if (ifstream(file_name)) {
+    if (fs::exists(file_name)) {
         cout << "\nFile '" << file_name << "' exists." << endl;
 
         // Read the file
@@ -47,12 +98,23 @@ int main() {
         string content;
         getline(file_in, content);
         cout << "File Content: " << content << endl;
+
+        // Add content to the file
+        addFileContent(file_name, "\nAdditional content added.");
+
+        // Update content of the file
+        updateFile(file_name, "Updated content.");
+
+        // Copy the file
+        copyFile(file_name, "sample_copy.txt");
+
+        // List files in the directory
+        cout << "\nFiles in current directory:" << endl;
+        listFiles(".");
     }
 
     // Clean up by deleting the file
-    if (remove(file_name.c_str()) == 0) {
-        cout << "\nFile '" << file_name << "' has been deleted." << endl;
-    }
+    deleteFile(file_name);
 
     // Introduce the concept of system calls
     cout << "\nSystem Calls:" << endl;
@@ -73,6 +135,5 @@ int main() {
     cout << "- Abstracts hardware details for processes." << endl;
     cout << "- Ensures system stability and security." << endl;
 
-    
     return 0;
 }
